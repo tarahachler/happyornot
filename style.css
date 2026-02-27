@@ -1,0 +1,30 @@
+button {
+    border: none;
+    background: none;
+    padding: 0;
+    transition: transform 0.1s ease-out;
+}
+
+button:active {
+    transform: scale(1.1);
+}
+
+.buttons{
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    margin-top: 18%;
+    appearance: unset;
+}
+
+img{
+    width: 300px;
+    height: 300px;
+    cursor: pointer;
+}
+
+#result{
+    text-align: center;
+    font-size: 16px;
+    margin-top: 400px;
+}
