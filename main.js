@@ -41,3 +41,29 @@ happyButton.addEventListener('click', displayResults);
 veryHappyButton.addEventListener('click', displayResults);
 sadButton.addEventListener('click', displayResults);
 verySadButton.addEventListener('click', displayResults);
+
+
+const buttons = document.querySelectorAll("button");
+
+buttons.forEach(button => {
+  button.addEventListener("pointerdown", () => {
+    button.classList.add("pressed");
+  });
+
+  button.addEventListener("pointerup", () => {
+    button.classList.remove("pressed");
+  });
+
+  button.addEventListener("pointerleave", () => {
+    button.classList.remove("pressed");
+  });
+});
+
+const clickSound = new Audio("click.mp3");
+
+document.querySelectorAll("button").forEach(button => {
+  button.addEventListener("pointerdown", () => {
+    clickSound.currentTime = 0;
+    clickSound.play();
+  });
+});
