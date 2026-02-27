@@ -5,8 +5,14 @@ button {
     transition: transform 0.1s ease-out;
 }
 
-button:active{
+button:active {
     transform: scale(1.1);
+}
+
+@media (pointer: coarse) {
+  button:focus {
+    transform: scale(1.1);
+  }
 }
 
 .buttons{
