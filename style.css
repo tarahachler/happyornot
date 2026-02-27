@@ -5,8 +5,7 @@ button {
     transition: transform 0.1s ease-out;
 }
 
-button:active,
-button:focus {
+button:active{
     transform: scale(1.1);
 }
 
