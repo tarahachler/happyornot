@@ -14,25 +14,67 @@ let happyCount = 0;
 let sadCount = 0;
 let verySadCount = 0;
 
-const clickSound = new Audio("click.m4a");
-
 let phrases = [];
 let phraseTimeout = null;
 let isShowingPhrase = false;
 
-async function loadPhrases(perSource = 5) {
+const clickSound = new Audio("./click.mp3");
+
+const SOURCES = [
+  { subreddit: "ProductivityApps" },
+  { subreddit: "productivity" },
+  { subreddit: "labubu" },
+  { subreddit: "getdisciplined" },
+];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function normalizeTitle(text) {
+  return text.replace(/\s+/g, " ").trim();
+}
+
+async function fetchSubredditTitles(subreddit, limit = 10) {
+  const url = `https://www.reddit.com/r/${subreddit}/new.json?limit=${limit}`;
+
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`Erreur ${res.status} pour r/${subreddit}`);
+  }
+
+  const json = await res.json();
+
+  return (json?.data?.children || [])
+    .map((item) => item?.data?.title || "")
+    .map(normalizeTitle)
+    .filter(Boolean);
+}
+
+async function loadPhrases() {
   try {
-    const res = await fetch(`/api/phrases?perSource=${encodeURIComponent(perSource)}`);
-    const json = await res.json();
+    const allLists = await Promise.allSettled(
+      SOURCES.map((src) => fetchSubredditTitles(src.subreddit, 10))
+    );
 
-    if (!res.ok) {
-      throw new Error(json?.error || "Erreur lors du chargement des phrases");
-    }
+    const allTitles = allLists
+      .filter((result) => result.status === "fulfilled")
+      .flatMap((result) => result.value);
 
-    phrases = json.phrases || [];
+    // supprimer doublons
+    const uniqueTitles = [...new Set(allTitles)];
+
+    phrases = shuffle(uniqueTitles);
+
     console.log(`${phrases.length} phrases chargées`);
   } catch (error) {
-    console.error("Impossible de charger les phrases :", error);
+    console.error("Erreur lors du chargement des phrases :", error);
+    phrases = [];
   }
 }
 
@@ -45,12 +87,25 @@ function getRandomPhrase() {
 function showRandomPhraseFor6Seconds() {
   const phrase = getRandomPhrase();
 
-  if (!phrase) return;
+  if (!phrase) {
+    phraseBox.textContent = "Aucune phrase disponible.";
+    phraseBox.classList.add("visible");
+    buttonsArea.classList.add("hidden");
+
+    clearTimeout(phraseTimeout);
+    phraseTimeout = setTimeout(() => {
+      phraseBox.classList.remove("visible");
+      phraseBox.textContent = "";
+      buttonsArea.classList.remove("hidden");
+      isShowingPhrase = false;
+    }, 6000);
+
+    return;
+  }
 
   clearTimeout(phraseTimeout);
 
   isShowingPhrase = true;
-
   buttonsArea.classList.add("hidden");
   phraseBox.textContent = phrase;
   phraseBox.classList.add("visible");
@@ -92,7 +147,7 @@ buttons.forEach((button) => {
 
     button.classList.add("pressed");
     clickSound.currentTime = 0;
-    clickSound.play();
+    clickSound.play().catch(() => {});
   });
 
   button.addEventListener("pointerup", () => {
@@ -105,4 +160,4 @@ buttons.forEach((button) => {
 });
 
 displayResults();
-loadPhrases(5);
+loadPhrases();
