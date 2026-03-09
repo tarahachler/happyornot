@@ -1,0 +1,82 @@
+button {
+    border: none;
+    background: none;
+    padding: 0;
+    transition: transform 0.1s ease-out;
+}
+
+button.pressed {
+    transform: scale(1.1);
+}
+
+.buttons{
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 37%;
+    appearance: unset;
+}
+
+img{
+    width: 250px;
+    height: 250px;
+    cursor: pointer;
+}
+
+#result{
+    text-align: center;
+    font-size: 16px;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-top: 480px;
+}
+
+.phrase-box {
+  margin-top: 2rem;
+  padding: 1rem 1.2rem;
+  max-width: 700px;
+  margin-inline: auto;
+  text-align: center;
+  font-size: 1.4rem;
+  line-height: 1.4;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.phrase-box.visible {
+  opacity: 1;
+}
+
+.vote-area {
+  min-height: 220px; /* adapte selon la taille de tes boutons */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.buttons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.buttons.hidden {
+  display: none;
+}
+
+.phrase-box {
+  display: none;
+  max-width: 700px;
+  padding: 1rem 1.2rem;
+  text-align: center;
+  font-size: 1.6rem;
+  line-height: 1.4;
+  margin-top: 40%;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 2rem ;
+}
+
+.phrase-box.visible {
+  display: block;
+}
